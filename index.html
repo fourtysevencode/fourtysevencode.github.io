@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ronak -- AI/ML Dev</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #07090f;
+      --bg2: #0d1220;
+      --surface: #111827;
+      --border: #1e2d4a;
+      --accent: #64ffda;
+      --accent-dim: rgba(100, 255, 218, 0.1);
+      --accent-dim2: rgba(100, 255, 218, 0.05);
+      --text: #ccd6f6;
+      --muted: #8892b0;
+      --faint: #3a4a6b;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Instrument Sans', sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* dot grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, var(--faint) 1px, transparent 1px);
+      background-size: 32px 32px;
+      opacity: 0.25;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ambient glow */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30vh;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 60vh;
+      background: radial-gradient(ellipse, rgba(100, 255, 218, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /*  NAV  */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 5vw;
+      background: rgba(7, 9, 15, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(100, 255, 218, 0.06);
+    }
+
+    .nav-logo {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    .nav-links a::before {
+      content: '0' counter(nav-item) '. ';
+      counter-increment: nav-item;
+      color: var(--accent);
+      font-size: 0.7rem;
+    }
+
+    .nav-links { counter-reset: nav-item; }
+
+    /* ── SECTIONS ── */
+    section {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 5vw;
+    }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 5rem;
+      max-width: 100%;
+    }
+
+    .hero-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 5vw;
+    }
+
+    .hero-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.875rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.2s;
+    }
+
+    .hero-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      line-height: 0.95;
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.35s;
+    }
+
+    .hero-sub {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: clamp(1.5rem, 4vw, 3rem);
+      color: var(--muted);
+      line-height: 1.1;
+      margin-bottom: 2rem;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.5s;
+    }
+
+    .hero-sub span {
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.65s;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.8s;
+    }
+
+    .btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      padding: 0.75rem 1.75rem;
+      border-radius: 4px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dim);
+      box-shadow: 0 0 20px rgba(100, 255, 218, 0.15);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--muted);
+      color: var(--text);
+    }
+
+    /* scroll indicator */
+    .scroll-line {
+      position: absolute;
+      bottom: 2rem;
+      left: 5vw;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 1.1s;
+    }
+
+    .scroll-line span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--faint);
+      letter-spacing: 0.1em;
+    }
+
+    .scroll-bar {
+      width: 48px;
+      height: 1px;
+      background: var(--faint);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-bar::after {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--accent);
+      animation: scrollSlide 2s ease infinite 1.5s;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      padding-top: 7rem;
+    }
+
+    .section-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      color: #e2e8f0;
+      letter-spacing: -0.02em;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+      max-width: 300px;
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .project-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      opacity: 0;
+      transform: translateY(24px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .project-card:hover {
+      border-color: rgba(100, 255, 218, 0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .project-card:hover::before { opacity: 1; }
+
+    .project-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .project-featured {
+      grid-column: 1 / -1;
+    }
+
+    .card-body { min-width: 0; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-icon {
+      font-size: 1.25rem;
+    }
+
+    .card-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #e2e8f0;
+    }
+
+    .card-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 2px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid rgba(100, 255, 218, 0.2);
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.65;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+
+    .card-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-end;
+    }
+
+    .card-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+      white-space: nowrap;
+    }
+
+    .card-link:hover { color: var(--accent); }
+
+    .card-link svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .about-text {
+      color: var(--muted);
+      line-height: 1.75;
+    }
+
+    .about-text p + p { margin-top: 1rem; }
+
+    .about-text a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .about-text a:hover { text-decoration: underline; }
+
+    .about-stack h3 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+
+    .stack-list {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem;
+    }
+
+    .stack-list li {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stack-list li::before {
+      content: '▸';
+      color: var(--accent);
+      font-size: 0.6rem;
+    }
+
+    /* ── CONTACT ── */
+    .contact-inner {
+      text-align: center;
+      padding: 5rem 0 8rem;
+    }
+
+    .contact-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      margin-bottom: 1rem;
+    }
+
+    .contact-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: #e2e8f0;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .contact-sub {
+      color: var(--muted);
+      font-size: 1rem;
+      max-width: 400px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 1.5rem 5vw;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 100%;
+    }
+
+    .footer-copy {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--faint);
+      letter-spacing: 0.05em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--faint);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollSlide {
+      0%   { left: -100%; }
+      50%  { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 3px;
+      height: 0.85em;
+      background: var(--accent);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 1.1s ease infinite;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 680px) {
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .project-card { grid-template-columns: 1fr; }
+      .card-links { flex-direction: row; align-items: flex-start; }
+      footer { flex-direction: column; gap: 1rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">ronak.tech</a>
+    <ul class="nav-links">
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#about">about</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <div id="hero" style="position:relative; z-index:1;">
+    <div class="hero-inner">
+      <p class="hero-label">// hi, I'm</p>
+      <h1 class="hero-name">Ronak<span class="cursor"></span></h1>
+      <h2 class="hero-sub">building AI that <span>actually works</span></h2>
+      <p class="hero-desc">
+        Class 12 student from Bangalore. I train models, ship products, and refuse to
+        wait until I have a degree to do real things.
+      </p>
+      <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">see my work</a>
+        <a href="https://github.com/fourtysevencode" target="_blank" rel="noopener" class="btn btn-secondary">github ↗</a>
+      </div>
+    </div>
+    <div class="scroll-line" style="position:absolute;">
+      <div class="scroll-bar"></div>
+      <span>scroll</span>
+    </div>
+  </div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="section-num">01.</span>
+      <h2 class="section-title">projects</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="projects-grid">
+
+      <!-- Vayu -->
+      <div class="project-card project-featured" data-delay="0">
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-icon">🔰</span>
+            <span class="card-name">Vayu</span>
+            <span class="card-badge">FEATURED</span>
+          </div>
+          <p class="card-desc">
+            AI-powered urban pollution monitoring platform built for the Coding for Climate competition.
+            Real-time AQI dashboard pulling live city data, a carbon footprint calculator with
+            emission factors, an OpenAI-generated air quality overview, and a YOLOv8 multi-class
+            computer vision module that detects haze, trash, construction dust, and smoke from images.
+            Trained on ~20,000 samples across dual T4 GPUs on Kaggle.
+          </p>
+          <div class="card-tags">
+            <span class="tag">YOLOv8</span>
+            <span class="tag">FastAPI</span>
+            <span class="tag">Ultralytics</span>
+            <span class="tag">Streamlit</span>
+            <span class="tag">OpenAI API</span>
+            <span class="tag">WAQI API</span>
+            <span class="tag">HuggingFace</span>
+            <span class="tag">Docker</span>
+          </div>
+        </div>
+        <div class="card-links">
+          <a href="https://vayuapp.online" target="_blank" rel="noopener" class="card-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            live demo
+          </a>
+          <a href="https://github.com/fourtysevencode/vayu" target="_blank" rel="noopener" class="card-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.94 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02.005 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.63-5.49 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            github
+          </a>
+        </div>
+      </div>
+
+
+      <!-- IMU Rep Fatigue -->
+      <div class="project-card" data-delay="200">
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-icon">🏋️</span>
+            <span class="card-name">IMU Rep Fatigue Analysis</span>
+          </div>
+          <p class="card-desc">
+            Signal processing pipeline that uses IMU sensor data to detect squat reps and
+            classify fatigue patterns across a workout set. Built with scipy, pandas, and numpy.
+          </p>
+          <div class="card-tags">
+            <span class="tag">Python</span>
+            <span class="tag">pandas</span>
+            <span class="tag">numpy</span>
+            <span class="tag">signal processing</span>
+          </div>
+        </div>
+        <div class="card-links">
+          <a href="https://github.com/fourtysevencode/imu-rep-fatigue-analysis" target="_blank" rel="noopener" class="card-link">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.21 11.39.6.11.82-.26.82-.58v-2.03c-3.34.73-4.04-1.61-4.04-1.61-.54-1.38-1.33-1.75-1.33-1.75-1.09-.74.08-.73.08-.73 1.2.08 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.94 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 5.8c1.02.005 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.65 1.66.24 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.62-2.81 5.63-5.49 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+            github
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-header">
+      <span class="section-num">02.</span>
+      <h2 class="section-title">about</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a Class 12 student in Bangalore obsessed with building AI systems that solve
+          real problems, not just Jupyter notebooks that never leave my laptop.
+        </p>
+        <p>
+          Right now I'm focused on computer vision, deployed ML pipelines, and full-stack
+          AI products. I also enjoy graphic design and photography.
+        </p>
+        <p>
+          I believe the best way to learn is to ship things, break them, and ship again.
+          Everything in my portfolio is live or on GitHub. No vaporware.
+        </p>
+        <p>
+          Find me on <a href="https://github.com/fourtysevencode" target="_blank" rel="noopener">GitHub</a>.
+        </p>
+      </div>
+
+      <div class="about-stack">
+        <h3>// tech I work with</h3>
+        <ul class="stack-list">
+          <li>Python</li>
+          <li>YOLO</li>
+          <li>FastAPI</li>
+          <li>Streamlit</li>
+          <li>scikit-learn</li>
+          <li>OpenAI API</li>
+          <li>HuggingFace</li>
+          <li>Docker</li>
+          <li>Kaggle</li>
+          <li>Git</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <p class="contact-label">03. what's next</p>
+      <h2 class="contact-title">let's talk</h2>
+      <p class="contact-sub">
+        open to collabs, internships, and interesting problems. reach out.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:ronakpalforyou@gmail.com" class="btn btn-primary">say hello ↗</a>
+        <a href="https://github.com/fourtysevencode" target="_blank" rel="noopener" class="btn btn-secondary">github ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-copy">ronak · bangalore · designed by claude sonnet</span>
+    <div class="footer-links">
+      <a href="https://github.com/fourtysevencode" target="_blank" rel="noopener">github</a>
+    </div>
+  </footer>
+
+  <script>
+    // scroll reveal for project cards
+    const cards = document.querySelectorAll('.project-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const delay = entry.target.dataset.delay || 0;
+          setTimeout(() => entry.target.classList.add('visible'), parseInt(delay));
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    cards.forEach(card => observer.observe(card));
+
+    // active nav link highlight
+    const sections = document.querySelectorAll('section[id], div[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    const navObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + entry.target.id
+              ? 'var(--accent)'
+              : '';
+          });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    sections.forEach(s => navObserver.observe(s));
+  </script>
+</body>
+</html>
+```
