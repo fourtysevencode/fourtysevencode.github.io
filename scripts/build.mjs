@@ -17,6 +17,9 @@ const TOKEN = process.env.GITHUB_TOKEN;
 const MIN_README_CHARS = 600;
 const MIN_README_BLOCKS = 3;
 
+// Never listed, whatever their README says
+const HIDDEN = [`${USER}.github.io`];
+
 // Used only if pinned repos can't be read from GitHub or the backup service
 const PINNED_FALLBACK = [
     "RakshAI",
@@ -93,7 +96,8 @@ async function fetchRepos() {
         all.push(...batch);
         if (batch.length < 100) break;
     }
-    return all.filter((repo) => !repo.private);
+    const hidden = new Set(HIDDEN.map((name) => name.toLowerCase()));
+    return all.filter((repo) => !repo.private && !hidden.has(repo.name.toLowerCase()));
 }
 
 // Pinned repo names, in profile order. GitHub's GraphQL API first, then a backup service.
