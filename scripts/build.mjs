@@ -1,6 +1,6 @@
 // Builds the static site into dist/.
 // Fetches public repos, keeps the ones with a detailed README, puts pinned repos
-// first, and writes project.html plus one crawlable page per project.
+// first, and writes the /projects/ listing plus one crawlable page per project.
 
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { marked } from "marked";
@@ -39,7 +39,8 @@ const HEADERS = {
 
 const monthYear = new Intl.DateTimeFormat("en-US", { month: "short", year: "numeric", timeZone: "UTC" });
 const longDate = new Intl.DateTimeFormat("en-US", { dateStyle: "long", timeZone: "UTC" });
-// Same tags as in src/index.html and src/project.html
+
+// Same tags as in src/index.html and src/projects.html
 const ICON_TAGS = `<link rel="icon" href="/favicon.ico" sizes="32x32">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -321,7 +322,7 @@ function projectPageHtml(repo) {
                 "@type": "BreadcrumbList",
                 itemListElement: [
                     { "@type": "ListItem", position: 1, name: "Home", item: `${SITE}/` },
-                    { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE}/project.html` },
+                    { "@type": "ListItem", position: 2, name: "Projects", item: `${SITE}/projects/` },
                     { "@type": "ListItem", position: 3, name: repo.name, item: url }
                 ]
             }
@@ -362,7 +363,7 @@ function projectPageHtml(repo) {
 
     <div class="page narrow">
         <header class="project-header">
-            <a class="back" href="/project.html"><span aria-hidden="true">&lt;--</span>Projects</a>
+            <a class="back" href="/projects/"><span aria-hidden="true">&lt;--</span>Projects</a>
             <h1 class="project-title" translate="no">${escapeHtml(repo.name)}</h1>
             <p class="meta">
                 ${metaHtml(repo)}
@@ -388,7 +389,7 @@ function sitemapXml(projects) {
     const latest = projects.map((p) => p.pushed_at).sort().at(-1)?.slice(0, 10);
     const entries = [
         { loc: `${SITE}/` },
-        { loc: `${SITE}/project.html`, lastmod: latest },
+        { loc: `${SITE}/projects/`, lastmod: latest },
         ...projects.map((p) => ({ loc: `${SITE}/projects/${p.slug}/`, lastmod: p.pushed_at.slice(0, 10) }))
     ];
 
@@ -448,8 +449,13 @@ console.log(`Listing ${projects.length} projects: ${projects.map((p) => p.name).
 
 await rm(DIST, { recursive: true, force: true });
 await cp(SRC, DIST, { recursive: true });
+await writeIcons();
 
-const template = await readFile(new URL("project.html", SRC), "utf8");
+// src/projects.html is a template: the finished page goes to dist/projects/index.html (/projects/)
+const template = await readFile(new URL("projects.html", SRC), "utf8");
+await rm(new URL("projects.html", DIST));
+await mkdir(new URL("projects/", DIST), { recursive: true });
+
 const itemList = jsonLd({
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -462,7 +468,7 @@ const itemList = jsonLd({
     }))
 });
 
-await writeFile(new URL("project.html", DIST), fill(template, {
+await writeFile(new URL("projects/index.html", DIST), fill(template, {
     structured_data: itemList,
     projects: projects.map(cardHtml).join(""),
     count: projects.length
