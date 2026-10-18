@@ -1,0 +1,460 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+:root {
+    color-scheme: dark;
+    --background: #1e1e1e;
+    --surface: rgba(28, 28, 28, 0.92);
+    --foreground: #f5f5f5;
+    --text: #d4d4d4;
+    --muted: #8f8f8f;
+    --border: rgba(255, 255, 255, 0.12);
+    --border-strong: rgba(255, 255, 255, 0.4);
+    --dots: rgba(255, 255, 255, 0.16);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+html {
+    min-height: 100%;
+    background-color: var(--background);
+}
+
+html:has(dialog[open]) {
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: var(--background);
+    background-image: radial-gradient(circle, var(--dots) 1px, transparent 1.5px);
+    background-size: 24px 24px;
+    color: var(--foreground);
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+:focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 3px;
+}
+
+.skip-link {
+    position: absolute;
+    left: 16px;
+    top: -100px;
+    padding: 8px 12px;
+    background: var(--foreground);
+    color: var(--background);
+    border-radius: 4px;
+    text-decoration: none;
+}
+
+.skip-link:focus-visible {
+    top: 16px;
+}
+
+.page {
+    width: min(1120px, 100% - 32px);
+    margin: 0 auto;
+    padding:
+        max(32px, env(safe-area-inset-top))
+        0
+        max(64px, env(safe-area-inset-bottom));
+}
+
+.page.narrow {
+    width: min(860px, 100% - 32px);
+}
+
+/* Header */
+
+.back {
+    display: inline-flex;
+    gap: 0.5em;
+    color: var(--muted);
+    font-size: 18px;
+    text-decoration: none;
+    touch-action: manipulation;
+    transition: color 150ms ease;
+}
+
+.back span {
+    font-weight: 600;
+    transition: transform 150ms ease;
+}
+
+.back:hover,
+.back:focus-visible {
+    color: var(--foreground);
+}
+
+.back:hover span,
+.back:focus-visible span {
+    transform: translateX(-4px);
+}
+
+h1 {
+    margin: 40px 0 10px;
+    font-size: clamp(56px, 10vw, 120px);
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1;
+}
+
+.intro {
+    max-width: 60ch;
+    margin: 0 0 32px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.5;
+    text-wrap: pretty;
+}
+
+.intro a,
+.site-footer a {
+    color: var(--foreground);
+    text-underline-offset: 3px;
+}
+
+.status {
+    margin: 0 0 16px;
+    color: var(--muted);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+}
+
+.site-footer {
+    margin-top: 48px;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* Project page header */
+
+.project-header {
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+}
+
+.project-title {
+    margin: 40px 0 16px;
+    font-size: clamp(40px, 8vw, 88px);
+    overflow-wrap: anywhere;
+}
+
+.project-header .intro {
+    margin: 16px 0 20px;
+    color: var(--text);
+}
+
+/* Cards */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    padding: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 150ms ease;
+}
+
+.card:hover,
+.card:focus-within {
+    border-color: var(--border-strong);
+}
+
+.card h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.card h2 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.card h2 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 14px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+.badge {
+    padding: 1px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.badge.pinned {
+    background: var(--foreground);
+    border-color: var(--foreground);
+    color: var(--background);
+    font-weight: 600;
+}
+
+.desc {
+    flex: 1;
+    margin: 0;
+    color: var(--text);
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.desc.empty {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.topics li {
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.07);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--foreground);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+        background-color 150ms ease,
+        border-color 150ms ease,
+        color 150ms ease;
+}
+
+.button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--foreground);
+}
+
+.button.primary {
+    background: var(--foreground);
+    border-color: var(--foreground);
+    color: var(--background);
+}
+
+.button.primary:hover {
+    background: #d6d6d6;
+}
+
+/* README popup */
+
+.readme {
+    width: min(880px, 100% - 32px);
+    max-width: none;
+    max-height: min(88vh, 960px);
+    padding: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: #1a1a1a;
+    color: var(--foreground);
+    box-shadow: 0 30px 100px rgba(0, 0, 0, 0.65);
+}
+
+.readme[open] {
+    display: flex;
+    flex-direction: column;
+    animation: pop 220ms cubic-bezier(0.2, 1.2, 0.4, 1);
+}
+
+.readme::backdrop {
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(4px);
+}
+
+@keyframes pop {
+    from {
+        opacity: 0;
+        transform: scale(0.94) translateY(10px);
+    }
+}
+
+.readme-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px 14px 24px;
+    border-bottom: 1px solid var(--border);
+}
+
+.readme-header h2 {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.readme-body {
+    padding: 24px clamp(20px, 4vw, 40px) 40px;
+    overflow: auto;
+    overscroll-behavior: contain;
+}
+
+/* Rendered markdown */
+
+.markdown {
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.markdown > :first-child {
+    margin-top: 0;
+}
+
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4 {
+    margin: 1.6em 0 0.6em;
+    color: var(--foreground);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+}
+
+.markdown h1,
+.markdown h2 {
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--border);
+}
+
+.markdown h1 { font-size: 28px; }
+.markdown h2 { font-size: 22px; }
+.markdown h3 { font-size: 18px; }
+.markdown h4 { font-size: 16px; }
+
+.markdown a {
+    color: var(--foreground);
+    text-decoration-color: rgba(255, 255, 255, 0.4);
+    text-underline-offset: 3px;
+}
+
+.markdown img {
+    max-width: 100%;
+    height: auto;
+}
+
+.markdown code {
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    font-family: var(--mono);
+    font-size: 0.88em;
+}
+
+.markdown pre {
+    padding: 16px;
+    overflow: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #141414;
+}
+
+.markdown pre code {
+    padding: 0;
+    background: none;
+    font-size: 14px;
+}
+
+.markdown blockquote {
+    margin: 0;
+    padding: 0 1em;
+    border-left: 3px solid var(--border-strong);
+    color: var(--muted);
+}
+
+.markdown table {
+    display: block;
+    max-width: 100%;
+    overflow: auto;
+    border-collapse: collapse;
+}
+
+.markdown th,
+.markdown td {
+    padding: 6px 12px;
+    border: 1px solid var(--border);
+}
+
+.markdown hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+}
+
+.muted {
+    color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}

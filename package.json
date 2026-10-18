@@ -1,0 +1,16 @@
+{
+  "name": "ronakbuilds-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs"
+  },
+  "dependencies": {
+    "marked": "12.0.2",
+    "sanitize-html": "2.13.0",
+    "sharp": "0.33.5"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

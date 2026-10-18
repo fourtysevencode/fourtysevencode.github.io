@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronak Pal · Portfolio</title>
+    <meta name="description" content="Ronak Pal's portfolio. Browse projects, find Ronak on GitHub and LinkedIn, or get in touch.">
+    <meta name="author" content="Ronak Pal">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#1e1e1e">
+
+    <link rel="canonical" href="https://ronakbuilds.tech/">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="Ronak Pal · Portfolio">
+    <meta property="og:description" content="Projects, GitHub, LinkedIn and contact for Ronak Pal.">
+    <meta property="og:url" content="https://ronakbuilds.tech/">
+    <meta property="og:site_name" content="Ronak Pal">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Ronak Pal · Portfolio">
+    <meta name="twitter:description" content="Projects, GitHub, LinkedIn and contact for Ronak Pal.">
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Ronak Pal",
+        "url": "https://ronakbuilds.tech/",
+        "email": "mailto:ronakpalforyou@gmail.com",
+        "sameAs": [
+            "https://github.com/fourtysevencode",
+            "https://www.linkedin.com/in/ronakpal/"
+        ]
+    }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        :root {
+            color-scheme: dark;
+            --background: #1e1e1e;
+            --foreground: #f5f5f5;
+            --muted: #8a8a8a;
+            --line: rgba(255, 255, 255, 0.35);
+            --dots: rgba(255, 255, 255, 0.16);
+        }
+
+        html {
+            min-height: 100%;
+            background-color: var(--background);
+        }
+
+        html:has(dialog[open]) {
+            overflow: hidden;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            padding:
+                max(24px, env(safe-area-inset-top))
+                max(16px, env(safe-area-inset-right))
+                max(24px, env(safe-area-inset-bottom))
+                max(16px, env(safe-area-inset-left));
+            background-color: var(--background);
+            background-image: radial-gradient(circle, var(--dots) 1px, transparent 1.5px);
+            background-size: 24px 24px;
+            color: var(--foreground);
+            font-family: "Inter", system-ui, -apple-system, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .skip-link {
+            position: absolute;
+            left: 16px;
+            top: -100px;
+            padding: 8px 12px;
+            background: var(--foreground);
+            color: var(--background);
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .skip-link:focus-visible {
+            top: 16px;
+        }
+
+        /* Title screen */
+
+        .title-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(48px, 9vh, 96px);
+            padding-bottom: 6vh;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(88px, 20vw, 240px);
+            font-weight: 600;
+            letter-spacing: -0.04em;
+            line-height: 0.9;
+            text-align: center;
+        }
+
+        nav ul,
+        .contact-menu {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav ul {
+            gap: clamp(18px, 3.5vh, 32px);
+        }
+
+        /* Menu items (links and buttons share one look) */
+
+        .menu-item {
+            position: relative;
+            display: inline-block;
+            padding: 0;
+            border: 0;
+            background: none;
+            color: var(--muted);
+            font: inherit;
+            font-weight: 400;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            text-align: left;
+            text-decoration: none;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: color 150ms ease;
+        }
+
+        nav .menu-item {
+            font-size: clamp(30px, 4vw, 48px);
+        }
+
+        .arrow {
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            margin-right: 0.6em;
+            font-size: 0.9em;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            color: var(--foreground);
+            opacity: 0;
+            transform: translate(-10px, -50%);
+            transition:
+                opacity 150ms ease,
+                transform 150ms ease;
+            pointer-events: none;
+        }
+
+        .menu-item:hover,
+        .menu-item:focus-visible,
+        .menu-item:active {
+            color: var(--foreground);
+        }
+
+        .menu-item:hover .arrow,
+        .menu-item:focus-visible .arrow,
+        .menu-item:active .arrow {
+            opacity: 1;
+            transform: translate(0, -50%);
+            animation: nudge 900ms ease-in-out 150ms infinite;
+        }
+
+        @keyframes nudge {
+            0%, 100% { translate: 0 0; }
+            50% { translate: 6px 0; }
+        }
+
+        .menu-item:focus-visible {
+            outline: none;
+        }
+
+        .menu-item:focus-visible::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -6px;
+            height: 2px;
+            background: var(--foreground);
+        }
+
+        .hint {
+            margin: 0;
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .hint kbd {
+            font-family: inherit;
+            color: var(--foreground);
+        }
+
+        @media (hover: none) {
+            .hint {
+                display: none;
+            }
+        }
+
+        /* Contact popup: a game-style dialog box */
+
+        .contact {
+            width: min(460px, 100% - 32px);
+            padding: 0;
+            border: 2px solid var(--foreground);
+            border-radius: 0;
+            background: var(--background);
+            color: var(--foreground);
+            box-shadow:
+                0 0 0 6px var(--background),
+                0 0 0 8px var(--line),
+                0 30px 90px rgba(0, 0, 0, 0.7);
+        }
+
+        .contact[open] {
+            animation: pop 260ms cubic-bezier(0.2, 1.4, 0.4, 1);
+        }
+
+        .contact::backdrop {
+            background: rgba(10, 10, 10, 0.72);
+            backdrop-filter: blur(4px);
+        }
+
+        @keyframes pop {
+            from {
+                opacity: 0;
+                transform: scale(0.88) translateY(10px);
+            }
+        }
+
+        .contact-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 36px 24px 22px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            margin: 0 0 10px;
+            font-size: 12px;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .contact h2 {
+            margin: 0 0 20px;
+            font-size: clamp(34px, 8vw, 44px);
+            font-weight: 600;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+
+        .email {
+            width: 100%;
+            margin: 0 0 28px;
+            padding: 14px 12px;
+            border: 1px dashed var(--line);
+            background: rgba(255, 255, 255, 0.04);
+            font-size: clamp(16px, 4.6vw, 21px);
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            overflow-wrap: anywhere;
+            user-select: all;
+        }
+
+        .contact-menu {
+            gap: 14px;
+        }
+
+        .contact-menu .menu-item {
+            font-size: 22px;
+        }
+
+        .contact-status {
+            min-height: 1.4em;
+            margin: 18px 0 0;
+            font-size: 13px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .menu-item,
+            .arrow {
+                transition: none;
+            }
+
+            .menu-item:hover .arrow,
+            .menu-item:focus-visible .arrow,
+            .menu-item:active .arrow,
+            .contact[open] {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a class="skip-link" href="#menu">Skip to Menu</a>
+
+    <main class="title-screen">
+        <h1 translate="no">Ronak</h1>
+
+        <nav aria-label="Main" id="menu">
+            <ul>
+                <li>
+                    <a class="menu-item" href="/projects.html">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>Projects
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" href="https://github.com/fourtysevencode" target="_blank" rel="noopener noreferrer me">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>Github
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" href="https://www.linkedin.com/in/ronakpal/" target="_blank" rel="noopener noreferrer me">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>LinkedIn
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" id="contact-link" href="mailto:ronakpalforyou@gmail.com" aria-haspopup="dialog">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>Contact
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </main>
+
+    <p class="hint" aria-hidden="true">
+        <kbd>↑</kbd> <kbd>↓</kbd> Select &nbsp;·&nbsp; <kbd>Enter</kbd> Open
+    </p>
+
+    <dialog class="contact" id="contact" aria-labelledby="contact-title">
+        <div class="contact-inner">
+            <p class="eyebrow">Contact</p>
+            <h2 id="contact-title">Say Hello</h2>
+            <p class="email" id="email" translate="no">ronakpalforyou@gmail.com</p>
+
+            <ul class="contact-menu">
+                <li>
+                    <button class="menu-item" type="button" id="copy-email" autofocus>
+                        <span class="arrow" aria-hidden="true">--&gt;</span><span class="label">Copy Email</span>
+                    </button>
+                </li>
+                <li>
+                    <a class="menu-item" href="mailto:ronakpalforyou@gmail.com">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>Open Mail App
+                    </a>
+                </li>
+                <li>
+                    <button class="menu-item" type="button" id="close-contact">
+                        <span class="arrow" aria-hidden="true">--&gt;</span>Close
+                    </button>
+                </li>
+            </ul>
+
+            <p class="contact-status" id="contact-status" role="status" aria-live="polite"></p>
+        </div>
+    </dialog>
+
+    <script>
+        const EMAIL = "ronakpalforyou@gmail.com";
+
+        const contactLink = document.getElementById("contact-link");
+        const contactDialog = document.getElementById("contact");
+        const copyButton = document.getElementById("copy-email");
+        const copyLabel = copyButton.querySelector(".label");
+        const closeButton = document.getElementById("close-contact");
+        const statusText = document.getElementById("contact-status");
+        const emailText = document.getElementById("email");
+
+        // Contact opens the popup; the mailto link still works if dialogs aren't supported
+        contactLink.addEventListener("click", (event) => {
+            if (typeof contactDialog.showModal !== "function") return;
+            event.preventDefault();
+            statusText.textContent = "Press Esc to close";
+            contactDialog.showModal();
+        });
+
+        closeButton.addEventListener("click", () => contactDialog.close());
+
+        // Clicking the dimmed backdrop closes the popup
+        contactDialog.addEventListener("click", (event) => {
+            if (event.target === contactDialog) contactDialog.close();
+        });
+
+        let resetTimer;
+        copyButton.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(EMAIL);
+                copyLabel.textContent = "Copied!";
+                statusText.textContent = "Email copied to clipboard";
+            } catch {
+                const range = document.createRange();
+                range.selectNodeContents(emailText);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                statusText.textContent = "Press ⌘ C or Ctrl C to copy";
+            }
+
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => {
+                copyLabel.textContent = "Copy Email";
+            }, 2000);
+        });
+
+        // Arrow keys move through whichever menu is on screen, like a game menu
+        document.addEventListener("keydown", (event) => {
+            if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+
+            const scope = document.querySelector("dialog[open]") || document.getElementById("menu");
+            const items = [...scope.querySelectorAll(".menu-item")];
+            event.preventDefault();
+
+            const current = items.indexOf(document.activeElement);
+            const step = event.key === "ArrowDown" ? 1 : -1;
+            const next = current === -1
+                ? (step === 1 ? 0 : items.length - 1)
+                : (current + step + items.length) % items.length;
+
+            items[next].focus();
+        });
+
+        // Hovering an item also selects it, so mouse and keyboard stay in sync
+        document.querySelectorAll(".menu-item").forEach((item) => {
+            item.addEventListener("mouseenter", () => item.focus({ preventScroll: true }));
+        });
+    </script>
+</body>
+</html>
