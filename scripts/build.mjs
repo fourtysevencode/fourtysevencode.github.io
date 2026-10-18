@@ -276,7 +276,7 @@ function linkButtons(repo) {
 }
 
 function cardHtml(repo) {
-    const page = `/projects/${repo.slug}/`;
+    const page = `${SITE}/projects/${repo.slug}/`;
     const topics = repo.topics?.length
         ? `<ul class="topics" aria-label="Topics">${repo.topics.slice(0, 6).map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ul>`
         : "";
@@ -284,14 +284,14 @@ function cardHtml(repo) {
     return `
         <li>
             <article class="card">
-                <h2><a href="${page}" translate="no">${escapeHtml(repo.name)}</a></h2>
+                <h2 translate="no">${escapeHtml(repo.name)}</h2>
                 <p class="meta">
                 ${metaHtml(repo)}
                 </p>
                 <p class="desc${repo.description ? "" : " empty"}">${escapeHtml(repo.description || "No description yet.")}</p>
                 ${topics}
                 <div class="actions">
-                <a class="button primary" href="${page}" data-readme data-name="${escapeHtml(repo.name)}" data-github="${escapeHtml(repo.html_url)}" aria-haspopup="dialog" aria-label="Read more about ${escapeHtml(repo.name)}">View More</a>
+                <a class="button primary" href="${page}" aria-label="Read more about ${escapeHtml(repo.name)}">View More</a>
                 ${linkButtons(repo)}
                 </div>
             </article>
