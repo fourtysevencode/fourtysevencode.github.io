@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects · Ronak Pal</title>
-    <meta name="description" content="Open-source projects by Ronak Pal: pinned projects first, then newest first. Read each project's README right on the page.">
+    <meta name="description" content="Open-source projects by Ronak Pal: pinned projects first, then newest first. Each project has its own page with its README.">
     <meta name="author" content="Ronak Pal">
     <meta name="robots" content="index, follow">
     <meta name="theme-color" content="#1e1e1e">
@@ -56,7 +56,7 @@
             <a class="back" href="/"><span aria-hidden="true">&lt;--</span>Home</a>
             <h1>Projects</h1>
             <p class="intro">
-                Pinned projects first, then the rest newest first. Open any card to read its README,
+                Pinned projects first, then the rest newest first. Hit View More on any card to read its README,
                 or browse everything on <a href="https://github.com/fourtysevencode" target="_blank" rel="noopener noreferrer me">GitHub</a>.
             </p>
         </header>
@@ -71,74 +71,5 @@
             <p>Updated {{updated}} from <a href="https://github.com/fourtysevencode?tab=repositories" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
         </footer>
     </div>
-
-    <dialog class="readme" id="readme" aria-labelledby="readme-title">
-        <div class="readme-header">
-            <h2 id="readme-title" translate="no">README</h2>
-            <a class="button" id="readme-github" href="#" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-            <button class="button" type="button" id="readme-close" aria-label="Close README">Close</button>
-        </div>
-        <div class="readme-body">
-            <article class="markdown" id="readme-content"></article>
-        </div>
-    </dialog>
-
-    <script>
-        // "View More" links go to each project's own page. With JavaScript, they open
-        // that page's README in a popup instead, so crawlers and visitors both get it.
-        const dialog = document.getElementById("readme");
-        const readmeTitle = document.getElementById("readme-title");
-        const readmeGithub = document.getElementById("readme-github");
-        const readmeContent = document.getElementById("readme-content");
-        const readmeBody = dialog.querySelector(".readme-body");
-        const readmes = new Map();
-        let request = 0;
-
-        function showMessage(text) {
-            const message = document.createElement("p");
-            message.className = "muted";
-            message.textContent = text;
-            readmeContent.replaceChildren(message);
-        }
-
-        async function loadReadme(url) {
-            if (!readmes.has(url)) {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error(`Couldn't load ${url}`);
-                const page = new DOMParser().parseFromString(await response.text(), "text/html");
-                const article = page.getElementById("readme-content");
-                if (!article) throw new Error(`No README on ${url}`);
-                readmes.set(url, article.innerHTML);
-            }
-            return readmes.get(url);
-        }
-
-        document.querySelector(".grid").addEventListener("click", async (event) => {
-            const link = event.target.closest("a[data-readme]");
-            if (!link || typeof dialog.showModal !== "function") return;
-            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            event.preventDefault();
-
-            const current = ++request;
-            readmeTitle.textContent = link.dataset.name;
-            readmeGithub.href = link.dataset.github;
-            showMessage("Loading README…");
-            dialog.showModal();
-            readmeBody.scrollTop = 0;
-
-            try {
-                const html = await loadReadme(link.href);
-                if (current === request) readmeContent.innerHTML = html;
-            } catch {
-                if (current === request) window.location.href = link.href;
-            }
-        });
-
-        document.getElementById("readme-close").addEventListener("click", () => dialog.close());
-
-        dialog.addEventListener("click", (event) => {
-            if (event.target === dialog) dialog.close();
-        });
-    </script>
 </body>
 </html>
