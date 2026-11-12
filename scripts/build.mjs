@@ -425,9 +425,13 @@ ${repo.readmeHtml}
                 controls.className = "mermaid-viewer-control-panel";
                 controls.setAttribute("aria-label", "Flowchart view controls");
 
+                const stage = document.createElement("div");
+                stage.className = "mermaid-stage";
+                diagram.replaceChildren(stage);
+
                 const canvas = document.createElement("div");
                 canvas.className = "mermaid-canvas";
-                diagram.insertBefore(canvas, svg);
+                stage.append(canvas);
                 canvas.append(svg);
 
                 let zoom = 1;
@@ -482,7 +486,7 @@ ${repo.readmeHtml}
                         renderView();
                     }, "right")
                 );
-                diagram.insertBefore(controls, canvas);
+                stage.append(controls);
                 renderView();
             }
         } catch (error) {

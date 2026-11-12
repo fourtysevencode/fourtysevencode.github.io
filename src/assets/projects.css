@@ -354,8 +354,6 @@ h1 {
 
 .markdown .mermaid {
     position: relative;
-    display: flex;
-    justify-content: center;
     margin: 24px 0;
     padding: 20px;
     overflow: auto;
@@ -364,16 +362,23 @@ h1 {
     background: var(--surface);
 }
 
+.mermaid-stage {
+    position: relative;
+    isolation: isolate;
+    min-height: 180px;
+}
+
 .mermaid-viewer-control-panel {
     position: absolute;
     right: 1em;
     bottom: 1em;
-    z-index: 1000;
+    z-index: 2147483647;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.2em;
     isolation: isolate;
     pointer-events: auto;
+    transform: translateZ(0);
 }
 
 .mermaid-viewer-control-panel > button {
@@ -432,6 +437,8 @@ h1 {
 .mermaid-canvas {
     display: flex;
     flex: 0 0 auto;
+    position: relative;
+    z-index: 0;
     justify-content: center;
 }
 
