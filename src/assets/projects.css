@@ -368,10 +368,12 @@ h1 {
     position: absolute;
     right: 1em;
     bottom: 1em;
-    z-index: 1;
+    z-index: 1000;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.2em;
+    isolation: isolate;
+    pointer-events: auto;
 }
 
 .mermaid-viewer-control-panel > button {
