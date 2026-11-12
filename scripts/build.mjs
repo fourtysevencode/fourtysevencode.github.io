@@ -422,61 +422,68 @@ ${repo.readmeHtml}
                 if (!svg) continue;
 
                 const controls = document.createElement("div");
-                controls.className = "mermaid-controls";
-                controls.setAttribute("aria-label", "Flowchart zoom controls");
-
-                const level = document.createElement("span");
-                level.className = "mermaid-zoom-level";
-                level.setAttribute("aria-live", "polite");
+                controls.className = "mermaid-viewer-control-panel";
+                controls.setAttribute("aria-label", "Flowchart view controls");
 
                 const canvas = document.createElement("div");
                 canvas.className = "mermaid-canvas";
                 diagram.insertBefore(canvas, svg);
                 canvas.append(svg);
 
-                const baseWidth = svg.getBoundingClientRect().width;
-                const baseHeight = svg.getBoundingClientRect().height;
                 let zoom = 1;
-                const setZoom = (nextZoom) => {
-                    zoom = Math.min(2.5, Math.max(0.75, nextZoom));
-                    svg.style.transform = "scale(" + zoom + ")";
-                    canvas.style.width = (baseWidth * zoom) + "px";
-                    canvas.style.height = (baseHeight * zoom) + "px";
-                    level.textContent = Math.round(zoom * 100) + "%";
-                    range.value = zoom;
+                const offset = { x: 0, y: 0 };
+                const renderView = () => {
+                    svg.style.transform = "translate(" + offset.x + "px, " + offset.y + "px) scale(" + zoom + ")";
                 };
 
-                const icon = (path) =>
-                    '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="' + path + '"></path></svg>';
-                const button = (content, accessibleLabel, change) => {
+                const icon = (paths) =>
+                    '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">' +
+                    paths.map((path) => '<path d="' + path + '"></path>').join("") +
+                    "</svg>";
+                const button = (content, accessibleLabel, action, className) => {
                     const element = document.createElement("button");
-                    element.className = "mermaid-control";
+                    element.className = "mermaid-control btn " + className;
                     element.type = "button";
                     element.innerHTML = content;
                     element.setAttribute("aria-label", accessibleLabel);
-                    element.addEventListener("click", () => setZoom(change ? zoom + change : 1));
+                    element.addEventListener("click", action);
                     return element;
                 };
 
-                const range = document.createElement("input");
-                range.className = "mermaid-zoom-range";
-                range.type = "range";
-                range.min = "0.75";
-                range.max = "2.5";
-                range.step = "0.01";
-                range.value = "1";
-                range.setAttribute("aria-label", "Flowchart zoom level");
-                range.addEventListener("input", () => setZoom(Number(range.value)));
-
                 controls.append(
-                    button(icon("M3 8h10"), "Zoom out", -0.05),
-                    range,
-                    level,
-                    button(icon("M8 3v10M3 8h10"), "Zoom in", 0.05),
-                    button(icon("M3.5 4.5A5.5 5.5 0 1 1 3 10M3.5 4.5V1.5M3.5 4.5h3"), "Reset zoom", 0)
+                    button(icon(["M3.75 7.5h8.5", "M8 3.25v8.5"]), "Zoom in", () => {
+                        zoom = Math.min(8, zoom + 0.1);
+                        renderView();
+                    }, "zoom-in"),
+                    button(icon(["M4 10l4-4 4 4"]), "Pan up", () => {
+                        offset.y += 100;
+                        renderView();
+                    }, "up"),
+                    button(icon(["M3.5 4.5A5.5 5.5 0 1 1 3 10M3.5 4.5V1.5M3.5 4.5h3"]), "Reset view", () => {
+                        zoom = 1;
+                        offset.x = 0;
+                        offset.y = 0;
+                        renderView();
+                    }, "reset"),
+                    button(icon(["M4 6l4 4 4-4"]), "Pan down", () => {
+                        offset.y -= 100;
+                        renderView();
+                    }, "down"),
+                    button(icon(["M3.75 8h8.5"]), "Zoom out", () => {
+                        zoom = Math.max(0.5, zoom - 0.1);
+                        renderView();
+                    }, "zoom-out"),
+                    button(icon(["M10 4l-4 4 4 4"]), "Pan left", () => {
+                        offset.x += 100;
+                        renderView();
+                    }, "left"),
+                    button(icon(["M6 4l4 4-4 4"]), "Pan right", () => {
+                        offset.x -= 100;
+                        renderView();
+                    }, "right")
                 );
                 diagram.insertBefore(controls, canvas);
-                setZoom(1);
+                renderView();
             }
         } catch (error) {
             console.error("Unable to render README Mermaid diagrams.", error);
