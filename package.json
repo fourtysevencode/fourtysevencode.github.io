@@ -6,9 +6,11 @@
     "build": "node scripts/build.mjs"
   },
   "dependencies": {
+    "esbuild": "^0.25.0",
     "marked": "12.0.2",
     "sanitize-html": "2.13.0",
-    "sharp": "0.33.5"
+    "sharp": "0.33.5",
+    "viewscreen-mermaid": "^1.0.0"
   },
   "engines": {
     "node": ">=20"

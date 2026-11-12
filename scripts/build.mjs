@@ -3,6 +3,8 @@
 // first, and writes the /projects/ listing plus one crawlable page per project.
 
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+import { build as bundle } from "esbuild";
 import { marked, Renderer } from "marked";
 import sanitizeHtml from "sanitize-html";
 import sharp from "sharp";
@@ -395,7 +397,7 @@ ${repo.readmeHtml}
     </div>
 
     <script type="module">
-        import { viewscreenMermaid } from "https://esm.sh/viewscreen-mermaid@1?bundle";
+        import { viewscreenMermaid } from "/assets/viewscreen-mermaid.js";
 
         for (const diagram of document.querySelectorAll(".mermaid")) {
             viewscreenMermaid(diagram, {
@@ -475,6 +477,13 @@ console.log(`Listing ${projects.length} projects: ${projects.map((p) => p.name).
 await rm(DIST, { recursive: true, force: true });
 await cp(SRC, DIST, { recursive: true });
 await writeIcons();
+await bundle({
+    entryPoints: ["node_modules/viewscreen-mermaid/index.js"],
+    bundle: true,
+    format: "esm",
+    minify: true,
+    outfile: fileURLToPath(new URL("assets/viewscreen-mermaid.js", DIST))
+});
 
 // src/projects.html is a template: the finished page goes to dist/projects/index.html (/projects/)
 const template = await readFile(new URL("projects.html", SRC), "utf8");
