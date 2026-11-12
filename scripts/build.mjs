@@ -434,6 +434,10 @@ ${repo.readmeHtml}
                 stage.append(canvas);
                 canvas.append(svg);
 
+                const actions = document.createElement("div");
+                actions.className = "mermaid-viewer-actions";
+                actions.setAttribute("aria-label", "Flowchart actions");
+
                 let zoom = 1;
                 const offset = { x: 0, y: 0 };
                 const renderView = () => {
@@ -444,49 +448,89 @@ ${repo.readmeHtml}
                     '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">' +
                     paths.map((path) => '<path d="' + path + '"></path>').join("") +
                     "</svg>";
-                const button = (content, accessibleLabel, action, className) => {
+                const button = (content, accessibleLabel, action, className, parent = controls) => {
                     const element = document.createElement("button");
                     element.className = "mermaid-control btn " + className;
                     element.type = "button";
                     element.innerHTML = content;
                     element.setAttribute("aria-label", accessibleLabel);
                     element.addEventListener("click", action);
+                    parent.append(element);
                     return element;
                 };
 
-                controls.append(
-                    button(icon(["M3.75 7.5h8.5", "M8 3.25v8.5"]), "Zoom in", () => {
+                button(icon(["M1 8h14M8 1l7 7-7 7M8 15L1 8l7-7"]), "Fit diagram to viewport", () => {
+                    zoom = 1;
+                    offset.x = 0;
+                    offset.y = 0;
+                    renderView();
+                }, "fit", actions);
+                button(icon(["M4 1.5h8.5A1.5 1.5 0 0 1 14 3v9.5M12 4.5H3.5A1.5 1.5 0 0 0 2 6v8.5A1.5 1.5 0 0 0 3.5 16H12a1.5 1.5 0 0 0 1.5-1.5V6A1.5 1.5 0 0 0 12 4.5Z"]), "Toggle fullscreen", () => {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        diagram.requestFullscreen?.();
+                    }
+                }, "fullscreen", actions);
+
+                button(icon(["M3.75 7.5h8.5", "M8 3.25v8.5"]), "Zoom in", () => {
                         zoom = Math.min(8, zoom + 0.1);
                         renderView();
-                    }, "zoom-in"),
-                    button(icon(["M4 10l4-4 4 4"]), "Pan up", () => {
+                    }, "zoom-in");
+                button(icon(["M4 10l4-4 4 4"]), "Pan up", () => {
                         offset.y += 100;
                         renderView();
-                    }, "up"),
-                    button(icon(["M3.5 4.5A5.5 5.5 0 1 1 3 10M3.5 4.5V1.5M3.5 4.5h3"]), "Reset view", () => {
+                    }, "up");
+                button(icon(["M3.5 4.5A5.5 5.5 0 1 1 3 10M3.5 4.5V1.5M3.5 4.5h3"]), "Reset view", () => {
                         zoom = 1;
                         offset.x = 0;
                         offset.y = 0;
                         renderView();
-                    }, "reset"),
-                    button(icon(["M4 6l4 4 4-4"]), "Pan down", () => {
+                    }, "reset");
+                button(icon(["M4 6l4 4 4-4"]), "Pan down", () => {
                         offset.y -= 100;
                         renderView();
-                    }, "down"),
-                    button(icon(["M3.75 8h8.5"]), "Zoom out", () => {
+                    }, "down");
+                button(icon(["M3.75 8h8.5"]), "Zoom out", () => {
                         zoom = Math.max(0.5, zoom - 0.1);
                         renderView();
-                    }, "zoom-out"),
-                    button(icon(["M10 4l-4 4 4 4"]), "Pan left", () => {
+                    }, "zoom-out");
+                button(icon(["M10 4l-4 4 4 4"]), "Pan left", () => {
                         offset.x += 100;
                         renderView();
-                    }, "left"),
-                    button(icon(["M6 4l4 4-4 4"]), "Pan right", () => {
+                    }, "left");
+                button(icon(["M6 4l4 4-4 4"]), "Pan right", () => {
                         offset.x -= 100;
                         renderView();
-                    }, "right")
-                );
-                stage.append(controls);
+                    }, "right");
+
+                let dragging = false;
+                let startX = 0;
+                let startY = 0;
+                canvas.addEventListener("pointerdown", (event) => {
+                    dragging = true;
+                    startX = event.clientX - offset.x;
+                    startY = event.clientY - offset.y;
+                    canvas.setPointerCapture(event.pointerId);
+                    canvas.classList.add("is-dragging");
+                });
+                canvas.addEventListener("pointermove", (event) => {
+                    if (!dragging) return;
+                    offset.x = event.clientX - startX;
+                    offset.y = event.clientY - startY;
+                    renderView();
+                });
+                canvas.addEventListener("pointerup", () => {
+                    dragging = false;
+                    canvas.classList.remove("is-dragging");
+                });
+                canvas.addEventListener("wheel", (event) => {
+                    event.preventDefault();
+                    zoom = Math.min(8, Math.max(0.5, zoom * Math.pow(0.998, event.deltaY)));
+                    renderView();
+                }, { passive: false });
+
+                stage.append(controls, actions);
                 renderView();
             }
         } catch (error) {

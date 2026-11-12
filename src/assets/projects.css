@@ -356,7 +356,7 @@ h1 {
     position: relative;
     margin: 24px 0;
     padding: 20px;
-    overflow: auto;
+    overflow: hidden;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--surface);
@@ -364,8 +364,11 @@ h1 {
 
 .mermaid-stage {
     position: relative;
+    height: min(560px, 70vh);
+    min-height: 360px;
     isolation: isolate;
-    min-height: 180px;
+    overflow: hidden;
+    background: #101214;
 }
 
 .mermaid-viewer-control-panel {
@@ -379,6 +382,20 @@ h1 {
     isolation: isolate;
     pointer-events: auto;
     transform: translateZ(0);
+}
+
+.mermaid-viewer-actions {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 2147483647;
+    display: flex;
+    gap: 0.5em;
+}
+
+.mermaid-viewer-actions > button {
+    width: 42px;
+    height: 42px;
 }
 
 .mermaid-viewer-control-panel > button {
@@ -436,10 +453,30 @@ h1 {
 
 .mermaid-canvas {
     display: flex;
-    flex: 0 0 auto;
-    position: relative;
+    position: absolute;
+    inset: 0;
     z-index: 0;
     justify-content: center;
+    align-items: center;
+    cursor: grab;
+    touch-action: none;
+}
+
+.mermaid-canvas.is-dragging {
+    cursor: grabbing;
+}
+
+.mermaid:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+    border: 0;
+    border-radius: 0;
+}
+
+.mermaid:fullscreen .mermaid-stage {
+    height: calc(100vh - 40px);
 }
 
 .markdown blockquote {
