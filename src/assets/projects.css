@@ -359,7 +359,7 @@ h1 {
     justify-content: center;
     margin: 24px 0;
     padding: 20px;
-    overflow-x: auto;
+    overflow: auto;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--surface);
@@ -370,6 +370,7 @@ h1 {
     align-items: center;
     justify-content: flex-end;
     gap: 6px;
+    flex-wrap: wrap;
     margin-bottom: 16px;
 }
 
@@ -381,8 +382,18 @@ h1 {
     text-align: center;
 }
 
+.mermaid-zoom-range {
+    width: min(180px, 32vw);
+    accent-color: var(--foreground);
+    cursor: pointer;
+}
+
 .mermaid-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-width: 32px;
+    min-height: 28px;
     padding: 4px 8px;
     border: 1px solid var(--border-strong);
     border-radius: 4px;
@@ -392,6 +403,16 @@ h1 {
     font-size: 13px;
     line-height: 1.2;
     cursor: pointer;
+}
+
+.mermaid-control svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
 }
 
 .mermaid-control:hover,
@@ -407,6 +428,13 @@ h1 {
     height: auto;
     min-width: 520px;
     transform-origin: top center;
+    transition: transform 120ms ease-out;
+}
+
+.mermaid-canvas {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
 }
 
 .markdown blockquote {
@@ -456,5 +484,13 @@ h1 {
 
     .markdown .mermaid svg {
         min-width: 460px;
+    }
+
+    .mermaid-controls {
+        justify-content: center;
+    }
+
+    .mermaid-zoom-range {
+        width: min(150px, 42vw);
     }
 }

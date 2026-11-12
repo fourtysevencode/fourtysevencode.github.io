@@ -429,30 +429,53 @@ ${repo.readmeHtml}
                 level.className = "mermaid-zoom-level";
                 level.setAttribute("aria-live", "polite");
 
+                const canvas = document.createElement("div");
+                canvas.className = "mermaid-canvas";
+                diagram.insertBefore(canvas, svg);
+                canvas.append(svg);
+
+                const baseWidth = svg.getBoundingClientRect().width;
+                const baseHeight = svg.getBoundingClientRect().height;
                 let zoom = 1;
                 const setZoom = (nextZoom) => {
                     zoom = Math.min(2.5, Math.max(0.75, nextZoom));
-                    svg.style.zoom = zoom;
+                    svg.style.transform = "scale(" + zoom + ")";
+                    canvas.style.width = (baseWidth * zoom) + "px";
+                    canvas.style.height = (baseHeight * zoom) + "px";
                     level.textContent = Math.round(zoom * 100) + "%";
+                    range.value = zoom;
                 };
 
-                const button = (label, accessibleLabel, change) => {
+                const icon = (path) =>
+                    '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="' + path + '"></path></svg>';
+                const button = (content, accessibleLabel, change) => {
                     const element = document.createElement("button");
                     element.className = "mermaid-control";
                     element.type = "button";
-                    element.textContent = label;
+                    element.innerHTML = content;
                     element.setAttribute("aria-label", accessibleLabel);
                     element.addEventListener("click", () => setZoom(change ? zoom + change : 1));
                     return element;
                 };
 
+                const range = document.createElement("input");
+                range.className = "mermaid-zoom-range";
+                range.type = "range";
+                range.min = "0.75";
+                range.max = "2.5";
+                range.step = "0.01";
+                range.value = "1";
+                range.setAttribute("aria-label", "Flowchart zoom level");
+                range.addEventListener("input", () => setZoom(Number(range.value)));
+
                 controls.append(
-                    button("−", "Zoom out", -0.25),
+                    button(icon("M3 8h10"), "Zoom out", -0.05),
+                    range,
                     level,
-                    button("Reset", "Reset zoom", 0),
-                    button("+", "Zoom in", 0.25)
+                    button(icon("M8 3v10M3 8h10"), "Zoom in", 0.05),
+                    button(icon("M3.5 4.5A5.5 5.5 0 1 1 3 10M3.5 4.5V1.5M3.5 4.5h3"), "Reset zoom", 0)
                 );
-                diagram.insertBefore(controls, svg);
+                diagram.insertBefore(controls, canvas);
                 setZoom(1);
             }
         } catch (error) {
