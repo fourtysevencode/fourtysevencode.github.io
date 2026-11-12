@@ -392,9 +392,9 @@ h1 {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 32px;
-    min-height: 28px;
-    padding: 4px 8px;
+    width: 28px;
+    height: 28px;
+    padding: 3px;
     border: 1px solid var(--border-strong);
     border-radius: 4px;
     background: transparent;
@@ -408,6 +408,8 @@ h1 {
 .mermaid-control svg {
     width: 14px;
     height: 14px;
+    min-width: 0;
+    max-width: none;
     fill: none;
     stroke: currentColor;
     stroke-linecap: round;
@@ -421,7 +423,7 @@ h1 {
     border-color: var(--foreground);
 }
 
-.markdown .mermaid svg {
+.markdown .mermaid-canvas > svg {
     display: block;
     align-self: center;
     width: min(100%, 760px);
@@ -482,7 +484,7 @@ h1 {
         padding: 14px 8px;
     }
 
-    .markdown .mermaid svg {
+    .markdown .mermaid-canvas > svg {
         min-width: 460px;
     }
 
