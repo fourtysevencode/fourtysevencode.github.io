@@ -18,7 +18,7 @@ Each project gets a card showing its description, topics, stars and links to Git
 
 Every listed repo also gets its own page at `ronakbuilds.tech/projects/<project>/` with the full README rendered on it. The README markdown is turned into HTML and sanitized. Relative image and link paths are rewritten to point back at the repo on GitHub, so screenshots and docs links still work.
 
-Mermaid fenced code blocks are rendered as flowcharts on these project pages. They use the site's dark theme, compact borders and responsive horizontal scrolling on small screens; GitHub remains the source of truth for the original Markdown.
+Mermaid fenced code blocks use GitHub's `viewscreen-mermaid` renderer on these project pages, including its native dark-mode rendering and pan/zoom control panel.
 
 These pages are plain static HTML, so search engines can read them. The build also writes the page metadata, structured data, a `sitemap.xml` and a `robots.txt`.
 
