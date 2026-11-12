@@ -416,6 +416,45 @@ ${repo.readmeHtml}
 
         try {
             await mermaid.run({ querySelector: ".mermaid" });
+
+            for (const diagram of document.querySelectorAll(".mermaid")) {
+                const svg = diagram.querySelector("svg");
+                if (!svg) continue;
+
+                const controls = document.createElement("div");
+                controls.className = "mermaid-controls";
+                controls.setAttribute("aria-label", "Flowchart zoom controls");
+
+                const level = document.createElement("span");
+                level.className = "mermaid-zoom-level";
+                level.setAttribute("aria-live", "polite");
+
+                let zoom = 1;
+                const setZoom = (nextZoom) => {
+                    zoom = Math.min(2.5, Math.max(0.75, nextZoom));
+                    svg.style.zoom = zoom;
+                    level.textContent = Math.round(zoom * 100) + "%";
+                };
+
+                const button = (label, accessibleLabel, change) => {
+                    const element = document.createElement("button");
+                    element.className = "mermaid-control";
+                    element.type = "button";
+                    element.textContent = label;
+                    element.setAttribute("aria-label", accessibleLabel);
+                    element.addEventListener("click", () => setZoom(change ? zoom + change : 1));
+                    return element;
+                };
+
+                controls.append(
+                    button("−", "Zoom out", -0.25),
+                    level,
+                    button("Reset", "Reset zoom", 0),
+                    button("+", "Zoom in", 0.25)
+                );
+                diagram.insertBefore(controls, svg);
+                setZoom(1);
+            }
         } catch (error) {
             console.error("Unable to render README Mermaid diagrams.", error);
         }

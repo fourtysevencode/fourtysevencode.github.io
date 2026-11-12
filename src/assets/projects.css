@@ -354,6 +354,8 @@ h1 {
 
 .markdown .mermaid {
     display: flex;
+    flex-direction: column;
+    align-items: stretch;
     justify-content: center;
     margin: 24px 0;
     padding: 20px;
@@ -363,11 +365,48 @@ h1 {
     background: var(--surface);
 }
 
+.mermaid-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.mermaid-zoom-level {
+    min-width: 44px;
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+}
+
+.mermaid-control {
+    min-width: 32px;
+    padding: 4px 8px;
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--foreground);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.mermaid-control:hover,
+.mermaid-control:focus-visible {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--foreground);
+}
+
 .markdown .mermaid svg {
     display: block;
+    align-self: center;
     width: min(100%, 760px);
     height: auto;
     min-width: 520px;
+    transform-origin: top center;
 }
 
 .markdown blockquote {
