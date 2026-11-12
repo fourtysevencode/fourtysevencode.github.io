@@ -352,6 +352,24 @@ h1 {
     font-size: 14px;
 }
 
+.markdown .mermaid {
+    display: flex;
+    justify-content: center;
+    margin: 24px 0;
+    padding: 20px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+}
+
+.markdown .mermaid svg {
+    display: block;
+    width: min(100%, 760px);
+    height: auto;
+    min-width: 520px;
+}
+
 .markdown blockquote {
     margin: 0;
     padding: 0 1em;
@@ -387,5 +405,17 @@ h1 {
     *::after {
         transition: none !important;
         animation: none !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .markdown .mermaid {
+        margin-right: -8px;
+        margin-left: -8px;
+        padding: 14px 8px;
+    }
+
+    .markdown .mermaid svg {
+        min-width: 460px;
     }
 }
