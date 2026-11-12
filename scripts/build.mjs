@@ -3,7 +3,7 @@
 // first, and writes the /projects/ listing plus one crawlable page per project.
 
 import { cp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import { marked } from "marked";
+import { marked, Renderer } from "marked";
 import sanitizeHtml from "sanitize-html";
 import sharp from "sharp";
 
@@ -176,14 +176,23 @@ function renderReadme(markdown, repo, file) {
     const rawRoot = `https://raw.githubusercontent.com/${repo.full_name}/${repo.default_branch}/`;
     const blobRoot = `https://github.com/${repo.full_name}/blob/${repo.default_branch}/`;
     const aligned = ["align"];
+    const renderer = new Renderer();
+    const defaultCode = renderer.code.bind(renderer);
+    renderer.code = (code, infostring, escaped) => {
+        const language = (infostring || "").trim().split(/\s+/, 1)[0].toLowerCase();
+        if (language !== "mermaid") return defaultCode(code, infostring, escaped);
+        return `<div class="mermaid" role="img" aria-label="Mermaid diagram">${escapeHtml(code)}</div>`;
+    };
 
-    return sanitizeHtml(marked.parse(markdown, { gfm: true }), {
+    return sanitizeHtml(marked.parse(markdown, { gfm: true, renderer }), {
         allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "details", "summary", "del", "input"]),
         allowedAttributes: {
             a: ["href", "title", "target", "rel"],
             img: ["src", "alt", "title", "width", "height", "align", "loading", "decoding"],
             input: ["type", "checked", "disabled"],
-            p: aligned, div: aligned, h1: aligned, h2: aligned, h3: aligned, th: aligned, td: aligned
+            p: aligned,
+            div: ["class", "role", "aria-label", ...aligned],
+            h1: aligned, h2: aligned, h3: aligned, th: aligned, td: aligned
         },
         allowedSchemes: ["http", "https", "mailto"],
         transformTags: {
@@ -384,6 +393,33 @@ ${repo.readmeHtml}
             </article>
         </main>
     </div>
+
+    <script type="module">
+        import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+
+        mermaid.initialize({
+            startOnLoad: false,
+            securityLevel: "strict",
+            theme: "base",
+            themeVariables: {
+                darkMode: true,
+                background: "#1c1c1c",
+                primaryColor: "#2a2a2a",
+                primaryTextColor: "#f5f5f5",
+                primaryBorderColor: "#8f8f8f",
+                lineColor: "#bdbdbd",
+                secondaryColor: "#232323",
+                tertiaryColor: "#1e1e1e",
+                fontFamily: "Inter, system-ui, sans-serif"
+            }
+        });
+
+        try {
+            await mermaid.run({ querySelector: ".mermaid" });
+        } catch (error) {
+            console.error("Unable to render README Mermaid diagrams.", error);
+        }
+    </script>
 </body>
 </html>
 `;
